@@ -4,19 +4,26 @@
 #include "compute_hash.h"
 
 
-int get_hash(char *digest_type, char *data_to_hash, int data_type) // inspired by the example
+char get_hash(char *digest_type, char *data_to_hash, char *data_type) // inspired by the example
 /* get_hash
   INPUT:
   OUTPUT:
 */
 {
-  if (data_type == "file"){
+  /* Split data_to_hash into different strings */
+  if(data_type == "file"){
+    // following snippet found on stackoverflow
     FILE *fp;
-    int i = 0;
-    char *p = strtok(data_to_hash,);
+    int i, nb_files;
+    i = 0;
+    nb_files = 0;
+    char *p = strtok(data_to_hash, " ");
+    char *filenames[30];
 
-    for (file in data_to_hash){
-
+    while(p != NULL){
+      filenames[i++] = p;
+      p = strtok(NULL, " "); // split the string containing the filenames
+      nb_files++;
     }
   }
 
@@ -30,23 +37,36 @@ int get_hash(char *digest_type, char *data_to_hash, int data_type) // inspired b
 
   md = EVP_get_digestbyname(digest_type);
 
-  if(!md) {
+  if(!md) { // if digest type unknown
     printf("Unknown message digest %s\n", argv[1]);
     exit(1);
   }
 
-  mdctx = EVP_MD_CTX_new();
-  EVP_DigestInit_ex(mdctx, md, NULL);
-  EVP_DigestUpdate(mdctx, mess3, strlen(mess3));
-  //EVP_DigestUpdate(mdctx, mess1, strlen(mess1));
-  //EVP_DigestUpdate(mdctx, mess2, strlen(mess2));
-  EVP_DigestFinal_ex(mdctx, md_value, &md_len);
-  EVP_MD_CTX_free(mdctx);
+  int nb;
+  switch(data_type){
+    case "file":
+      nb = nb_files;
+      data = filesnames;
+    case "string":
+      nb = 1;
+      data = ;
+  }
+
+  int i;
+  for(i = 0; i < nb; ++i){
+    mdctx = EVP_MD_CTX_new();
+    EVP_DigestInit_ex(mdctx, md, NULL);
+    EVP_DigestUpdate(mdctx, data[i], strlen(data[i]));
+    //EVP_DigestUpdate(mdctx, mess1, strlen(mess1));
+    EVP_DigestFinal_ex(mdctx, md_value, &md_len);
+    EVP_MD_CTX_free(mdctx);
+  }
+
 
   printf("Digest is: ");
   for (i = 0; i < md_len; i++)
   printf("%02x", md_value[i]);
   printf("\n");
 
-  return 0;
+  return data_to_hash;
 }
